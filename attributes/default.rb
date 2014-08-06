@@ -1,0 +1,29 @@
+default[:sensu][:use_embedded_ruby] = true
+default[:sensu][:handlers_directory] = "/etc/sensu/handlers"
+
+default[:uchiwa][:server_name] = "sensu"
+default[:uchiwa][:ssl][:enabled] = false
+default[:uchiwa][:ssl][:certificate] = ""
+default[:uchiwa][:ssl][:certificate_key] = ""
+default[:uchiwa][:settings][:host] = node[:ipaddress]
+
+
+#default[:sensu][:handlers][:mailer][:admin_gui] = "http://admin.example.com:8080/"
+default[:sensu][:handlers][:mailer][:enabled] = false
+default[:sensu][:handlers][:mailer][:file_name] = "mailer.rb"
+default[:sensu][:handlers][:mailer][:config][:mail_from] = "someone@myorg.com"
+default[:sensu][:handlers][:mailer][:config][:mail_to] = "someone@myorg.com"
+default[:sensu][:handlers][:mailer][:config][:smtp_address] = "localhost"
+default[:sensu][:handlers][:mailer][:config][:smtp_port] = "25"
+default[:sensu][:handlers][:mailer][:config][:smtp_domain] = "myorg.com"
+
+default[:sensu][:handlers][:slack][:enabled] = false
+default[:sensu][:handlers][:slack][:file_name] = "slack.rb"
+default[:sensu][:handlers][:slack][:config][:token] = "TOKEN"
+default[:sensu][:handlers][:slack][:config][:team_name] = "TEAM"
+default[:sensu][:handlers][:slack][:config][:channel] = "CHANNEL"
+default[:sensu][:handlers][:slack][:config][:message_prefix] = "Sensu: "
+default[:sensu][:handlers][:slack][:config][:surround] = "```"
+default[:sensu][:handlers][:slack][:config][:bot_name] = "Good news bot"
+
+
