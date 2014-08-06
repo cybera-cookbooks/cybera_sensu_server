@@ -26,6 +26,14 @@ template "/etc/nginx/sites-available/sensu" do
 end
 nginx_site "sensu"
 
+# Add Sensu Filters
+node[:sensu][:filters].each do |name, attributes|
+  sensu_filter name do
+    attributes attributes[:attributes]
+    negate attributes[:negate]
+  end
+end
+
 handler_directory = node[:sensu][:handlers_directory]
 # add sensu handlers
 node[:sensu][:handlers].each do |name, attributes|
@@ -41,6 +49,7 @@ node[:sensu][:handlers].each do |name, attributes|
   sensu_handler name do
     type "pipe"
     command "#{handler_directory}/#{file_name}"
+    filters attributes[:filters]
   end
 
   sensu_snippet name do

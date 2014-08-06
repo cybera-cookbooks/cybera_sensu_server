@@ -7,10 +7,15 @@ default[:uchiwa][:ssl][:certificate] = ""
 default[:uchiwa][:ssl][:certificate_key] = ""
 default[:uchiwa][:settings][:host] = node[:ipaddress]
 
+# Define Filters
+default[:sensu][:filters][:production][:attributes][:client][:environment] = "production"
+default[:sensu][:filters][:production][:negate] = false
 
+# Define Handlers
 #default[:sensu][:handlers][:mailer][:admin_gui] = "http://admin.example.com:8080/"
 default[:sensu][:handlers][:mailer][:enabled] = false
 default[:sensu][:handlers][:mailer][:file_name] = "mailer.rb"
+default[:sensu][:handlers][:mailer][:filters] = []
 default[:sensu][:handlers][:mailer][:config][:mail_from] = "someone@myorg.com"
 default[:sensu][:handlers][:mailer][:config][:mail_to] = "someone@myorg.com"
 default[:sensu][:handlers][:mailer][:config][:smtp_address] = "localhost"
@@ -19,6 +24,7 @@ default[:sensu][:handlers][:mailer][:config][:smtp_domain] = "myorg.com"
 
 default[:sensu][:handlers][:slack][:enabled] = false
 default[:sensu][:handlers][:slack][:file_name] = "slack.rb"
+default[:sensu][:handlers][:slack][:filters] = ["production"]
 default[:sensu][:handlers][:slack][:config][:token] = "TOKEN"
 default[:sensu][:handlers][:slack][:config][:team_name] = "TEAM"
 default[:sensu][:handlers][:slack][:config][:channel] = "CHANNEL"
