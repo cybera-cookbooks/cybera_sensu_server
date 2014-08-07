@@ -34,8 +34,8 @@ node[:sensu][:filters].each do |name, attributes|
   end
 end
 
+# Add Sensu Handlers
 handler_directory = node[:sensu][:handlers_directory]
-# add sensu handlers
 node[:sensu][:handlers].each do |name, attributes|
   next unless attributes[:enabled]
   file_name = attributes[:file_name]
@@ -44,17 +44,25 @@ node[:sensu][:handlers].each do |name, attributes|
     path "#{handler_directory}/#{file_name}"
     source "handlers/#{file_name}"
     mode 0555
-  end
+  end if file_name
+
+  attributes[:gems].each do |gem_name, config|
+    sensu_gem gem_name do
+      version config[:version] if config[:version]
+      action :install
+    end
+  end if attributes[:gems]
 
   sensu_handler name do
-    type "pipe"
-    command "#{handler_directory}/#{file_name}"
-    filters attributes[:filters]
+    type      attributes[:type] || "pipe"
+    command   "#{handler_directory}/#{file_name}" if file_name
+    filters   attributes[:filters]                if attributes[:filters]
+    handlers  attributes[:handlers]               if attributes[:type] == "set"
   end
 
   sensu_snippet name do
     content attributes[:config]
-  end
+  end if attributes[:config]
 end
 
 # add sensu plugins
@@ -66,8 +74,8 @@ end
 # add sensu mutators
   # add files
   # make LWRP calls to generate config
-# add sensu checks
-  # this will be done by including an (hopefully) arbitrary recipe that will make LWRP calls
+
+# Add Sensu Checks
 node[:sensu][:checks].each do |name, attributes|
   next unless attributes[:enabled]
 

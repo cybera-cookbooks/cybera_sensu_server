@@ -12,10 +12,14 @@ default[:sensu][:filters][:production][:attributes][:client][:environment] = "pr
 default[:sensu][:filters][:production][:negate] = false
 
 # Define Handlers
+default[:sensu][:handlers][:lmc_alerting][:enabled] = false
+default[:sensu][:handlers][:lmc_alerting][:type] = "set"
+default[:sensu][:handlers][:lmc_alerting][:handlers] = ["mailer", "slack", "revere"]
+
 #default[:sensu][:handlers][:mailer][:admin_gui] = "http://admin.example.com:8080/"
 default[:sensu][:handlers][:mailer][:enabled] = false
 default[:sensu][:handlers][:mailer][:file_name] = "mailer.rb"
-default[:sensu][:handlers][:mailer][:filters] = []
+default[:sensu][:handlers][:mailer][:gems][:mail][:version] = "~> 2.5.4"
 default[:sensu][:handlers][:mailer][:config][:mail_from] = "someone@myorg.com"
 default[:sensu][:handlers][:mailer][:config][:mail_to] = "someone@myorg.com"
 default[:sensu][:handlers][:mailer][:config][:smtp_address] = "localhost"
