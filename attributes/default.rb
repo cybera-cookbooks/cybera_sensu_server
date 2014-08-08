@@ -26,6 +26,13 @@ default[:sensu][:handlers][:mailer][:config][:smtp_address] = "localhost"
 default[:sensu][:handlers][:mailer][:config][:smtp_port] = "25"
 default[:sensu][:handlers][:mailer][:config][:smtp_domain] = "myorg.com"
 
+default[:sensu][:handlers][:revere][:enabled] = false
+default[:sensu][:handlers][:revere][:file_name] = "revere.rb"
+default[:sensu][:handlers][:revere][:filters] = ["production"]
+default[:sensu][:handlers][:revere][:config][:token] = "mytoken"
+default[:sensu][:handlers][:revere][:config][:url] = "revere.myorg.com"
+default[:sensu][:handlers][:revere][:config][:channel] = "alert channel"
+
 default[:sensu][:handlers][:slack][:enabled] = false
 default[:sensu][:handlers][:slack][:file_name] = "slack.rb"
 default[:sensu][:handlers][:slack][:filters] = ["production"]

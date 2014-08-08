@@ -3,14 +3,15 @@
 require 'rubygems' if RUBY_VERSION < '1.9.0'
 require 'sensu-handler'
 require 'json'
+require 'open-uri'
 
 class Revere < Sensu::Handler
 
-  def revere_token
+  def token
     get_setting('token')
   end
 
-  def revere_url
+  def url
     get_setting('url')
   end
 
@@ -18,42 +19,37 @@ class Revere < Sensu::Handler
     get_setting('channel')
   end
 
-  def user
-    get_setting('user')
-  end
-
-  def incident_key
-    @event['client']['name'] + '/' + @event['check']['name']
-  end
-
   def get_setting(name)
-    settings["slack"][name]
+    settings["revere"][name]
   end
 
   def handle
+    # only generate alert if the check status is critical
+    return unless check_status == 2
+
     description = @event['notification'] || build_description
-    post_data("#{incident_key}: #{description}")
+    post_data(description)
   end
 
   def build_description
-    [
-      @event['client']['name'],
-      @event['check']['name'],
-      @event['check']['output'],
-      @event['client']['address'],
-      @event['client']['subscriptions'].join(',')
-    ].join(' : ')
+    default = "Unknown"
+    status = {
+      0 => 'healthy',
+      1 => 'warning',
+      2 => 'critical'
+    }
+    return "#{@event['client']['name']} #{@event['check']['name']} is #{status.fetch(check_status, default)}. Check email or Sensu dashboard for more information"
   end
 
   def post_data(notice)
-    uri = slack_uri(slack_token)
+    uri = revere_uri(token)
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
 
     req = Net::HTTP::Post.new("#{uri.path}?#{uri.query}")
-    text = slack_surround ? slack_surround + notice + slack_surround : notice
-    req.body = "payload=#{payload(text).to_json}"
+    req.body = "message=\"#{URI::encode notice}\""
 
+    puts "sending revere alert to #{uri} with message #{req.body}"
     response = http.request(req)
     verify_response(response)
   end
@@ -67,33 +63,12 @@ class Revere < Sensu::Handler
     end
   end
 
-  def payload(notice)
-    {
-      :link_names => 1,
-      :text => [slack_message_prefix, notice].compact.join(' '),
-      :icon_emoji => icon_emoji
-    }.tap do |payload|
-      payload[:channel] = slack_channel if slack_channel
-      payload[:username] = slack_bot_name if slack_bot_name
-    end
-  end
-
-  def icon_emoji
-    default = ":feelsgood:"
-    emoji = {
-      0 => ':godmode:',
-      1 => ':hurtrealbad:',
-      2 => ':feelsgood:'
-    }
-    emoji.fetch(check_status.to_i, default)
-  end
-
   def check_status
-    @event['check']['status']
+    return @event['check']['status'].to_i
   end
 
-  def slack_uri(token)
-    url = "https://#{slack_team_name}.slack.com/services/hooks/incoming-webhook?token=#{token}"
+  def revere_uri(token)
+    url = "https://revere.cybera.ca/api/broadcast_message_by_channel_name/#{channel}?auth_token=#{token}"
     URI(url)
   end
 

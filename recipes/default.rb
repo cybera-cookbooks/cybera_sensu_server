@@ -40,18 +40,22 @@ node[:sensu][:handlers].each do |name, attributes|
   next unless attributes[:enabled]
   file_name = attributes[:file_name]
 
-  cookbook_file "#{name} handler" do
-    path "#{handler_directory}/#{file_name}"
-    source "handlers/#{file_name}"
-    mode 0555
-  end if file_name
-
-  attributes[:gems].each do |gem_name, config|
-    sensu_gem gem_name do
-      version config[:version] if config[:version]
-      action :install
+  if file_name
+    cookbook_file "#{name} handler" do
+      path "#{handler_directory}/#{file_name}"
+      source "handlers/#{file_name}"
+      mode 0555
     end
-  end if attributes[:gems]
+  end
+
+  if attributes[:gems]
+    attributes[:gems].each do |gem_name, config|
+      sensu_gem gem_name do
+        version config[:version] if config[:version]
+        action :install
+      end
+    end
+  end
 
   sensu_handler name do
     type      attributes[:type] || "pipe"
