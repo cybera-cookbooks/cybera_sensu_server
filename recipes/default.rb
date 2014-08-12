@@ -7,24 +7,48 @@ include_recipe "sensu::api_service"
 include_recipe "uchiwa"
 
 # TODO: drop off SSL certs to be used for dashboard
-include_recipe "nginx"
-node.set[:nginx][:default_site_enabled] = false
-template "/etc/nginx/sites-available/sensu" do
-  source "nginx_conf.erb"
-  notifies :reload, "service[nginx]"
-  variables ({
-    listen_address:       node[:ipaddress],
-    listen_port:          if node[:uchiwa][:ssl][:enabled] then 443 else 80 end,
-    uchiwa_address:       node[:uchiwa][:settings][:host],
-    uchiwa_port:          node[:uchiwa][:settings][:port],
-    log_dir:              node[:nginx][:log_dir],
-    server_name:          node[:uchiwa][:server_name],
-    ssl:                  node[:uchiwa][:ssl][:enabled],
-    ssl_certificate:      node[:uchiwa][:ssl][:certificate],
-    ssl_certificate_key:  node[:uchiwa][:ssl][:certificate_key],
-  })
+if node[:sensu][:nginx][:ssl][:enabled]
+  ssl_config = node[:sensu][:nginx][:ssl]
+  secret = Chef::EncryptedDataBagItem.load_secret
+  dashboard_ssl = Chef::EncryptedDataBagItem.load("sensu", "dashboard_ssl", secret)
+  directory ssl_config[:directory] do
+    recursive true
+    action :create
+  end
+  file "#{ssl_config[:directory]}/#{ssl_config[:certificate]}" do
+    content dashboard_ssl["ssl"]["cert"]
+    action :create
+  end
+  file "#{ssl_config[:directory]}/#{ssl_config[:certificate_key]}" do
+    content dashboard_ssl["ssl"]["key"]
+    mode 0600
+    action :create
+  end
 end
-nginx_site "sensu"
+
+if node[:sensu][:nginx][:enabled]
+  include_recipe "nginx"
+  node.set[:nginx][:default_site_enabled] = false
+  template "/etc/nginx/sites-available/sensu" do
+    source "nginx_conf.erb"
+    notifies :reload, "service[nginx]"
+    variables ({
+      listen_address:       node[:ipaddress],
+      listen_port:          if node[:sensu][:nginx][:ssl][:enabled] then 443 else 80 end,
+      uchiwa_address:       node[:uchiwa][:settings][:host],
+      uchiwa_port:          node[:uchiwa][:settings][:port],
+      log_dir:              node[:nginx][:log_dir],
+      server_name:          node[:uchiwa][:server_name],
+      sensu_api_address:    node[:sensu][:api][:host],
+      sensu_api_post:       node[:sensu][:api][:port],
+      ssl:                  node[:sensu][:nginx][:ssl][:enabled],
+      ssl_directory:        node[:sensu][:nginx][:ssl][:directory],
+      ssl_certificate:      node[:sensu][:nginx][:ssl][:certificate],
+      ssl_certificate_key:  node[:sensu][:nginx][:ssl][:certificate_key],
+    })
+  end
+  nginx_site "sensu"
+end
 
 # Add Sensu Filters
 node[:sensu][:filters].each do |name, attributes|

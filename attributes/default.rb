@@ -1,11 +1,15 @@
 default[:sensu][:use_embedded_ruby] = true
 default[:sensu][:handlers_directory] = "/etc/sensu/handlers"
+default[:sensu][:nginx][:enabled] = true
+default[:sensu][:nginx][:uchiwa] = true
+default[:sensu][:nginx][:sensu_api] = true
+default[:sensu][:nginx][:ssl][:enabled] = false
+default[:sensu][:nginx][:ssl][:directory] = "/etc/nginx/ssl"
+default[:sensu][:nginx][:ssl][:certificate] = "cert.pem"
+default[:sensu][:nginx][:ssl][:certificate_key] = "key.pem"
 
 default[:uchiwa][:server_name] = "sensu"
-default[:uchiwa][:ssl][:enabled] = false
-default[:uchiwa][:ssl][:certificate] = ""
-default[:uchiwa][:ssl][:certificate_key] = ""
-default[:uchiwa][:settings][:host] = node[:ipaddress]
+default[:uchiwa][:settings][:host] = "localhost"
 
 # Define Filters
 default[:sensu][:filters][:production][:attributes][:client][:environment] = "production"
