@@ -14,6 +14,7 @@ require 'sensu-handler'
 gem 'mail', '~> 2.5.4'
 require 'mail'
 require 'timeout'
+require 'json'
 
 class Mailer < Sensu::Handler
   def short_name
@@ -25,8 +26,33 @@ class Mailer < Sensu::Handler
   end
 
   def handle
-    # mail_to = settings['mailer']['mail_to']
-    mail_to = @event['check']['mail_to'] || settings['mailer']['mail_to']
+    # get client stashes for additional config
+    stash_configs = []
+    client_stashes = if @event['client']['stashes'].kind_of?(Array) then @event['client']['stashes'] else [] end
+    client_stashes.each do |stash|
+      stash_data = api_request(:GET, '/stash/' + stash)
+      next if stash_data.code != '200'
+      stash_json = JSON.parse(stash_data.body)
+      stash_configs << stash_json unless stash_json.nil?
+    end
+
+    mail_to = []
+
+    if settings['mailer']['mail_to'].kind_of? Array
+      mail_to.concat settings['mailer']['mail_to']
+    elsif settings['mailer']['mail_to'].kind_of? String
+      mail_to << settings['mailer']['mail_to']
+    end
+
+    stash_configs.each do |stash|
+      stash_handlers = stash['handlers']
+      next unless stash_handlers
+      stash_mailer = stash_handlers['mailer']
+      next unless stash_mailer
+      stash_mail_to = stash_mailer['mail_to']
+      mail_to.concat stash_mail_to if stash_mail_to.kind_of? Array
+    end
+    mail_to.uniq!   # we only want to send to each address once
     mail_from =  settings['mailer']['mail_from']
 
     delivery_method = settings['mailer']['delivery_method'] || 'smtp'
