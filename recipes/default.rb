@@ -58,6 +58,34 @@ node[:sensu][:filters].each do |name, attributes|
   end
 end
 
+# Add Sensu Extensions
+extension_directory = node[:sensu][:extensions_directory]
+node[:sensu][:extensions].each do |name, attributes|
+  next unless attributes[:enabled]
+  file_name = attributes[:file_name]
+
+  if file_name
+    cookbook_file "#{name} handler" do
+      path "#{extension_directory}/#{file_name}"
+      source "extensions/#{file_name}"
+      mode 0644
+    end
+  end
+
+  if attributes[:gems]
+    attributes[:gems].each do |gem_name, config|
+      sensu_gem gem_name do
+        version config[:version] if config[:version]
+        action :install
+      end
+    end
+  end
+
+  sensu_snippet name do
+    content attributes[:config]
+  end if attributes[:config]
+end
+
 # Add Sensu Handlers
 handler_directory = node[:sensu][:handlers_directory]
 node[:sensu][:handlers].each do |name, attributes|
@@ -114,7 +142,7 @@ node[:sensu][:checks].each do |name, attributes|
   next unless attributes[:enabled]
 
   sensu_check name do
-    type        attributes[:type] unless attributes[:type]
+    type        attributes[:type] if attributes[:type]
     command     attributes[:command]
     handlers    attributes[:handlers]
     subscribers attributes[:subscribers]

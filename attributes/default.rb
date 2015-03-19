@@ -2,6 +2,7 @@ default['rabbitmq']['use_distro_version'] = true
 
 default[:sensu][:use_embedded_ruby] = true
 default[:sensu][:handlers_directory] = "/etc/sensu/handlers"
+default[:sensu][:extensions_directory] = "/etc/sensu/extensions"
 default[:sensu][:nginx][:enabled] = true
 default[:sensu][:nginx][:uchiwa] = true
 default[:sensu][:nginx][:sensu_api] = true
@@ -19,6 +20,17 @@ default[:sensu][:client][:subscriptions] = ["basic_checks"]
 # Define Filters
 default[:sensu][:filters][:production][:attributes][:client][:environment] = "production"
 default[:sensu][:filters][:production][:negate] = false
+
+# Define Extensions
+default[:sensu][:extensions][:influxdb][:enabled] = false
+default[:sensu][:extensions][:influxdb][:file_name] = "influxdb.rb"
+default[:sensu][:extensions][:influxdb][:gems][:influxdb][:version] = "~> 0.1.8"
+default[:sensu][:extensions][:influxdb][:config][:host] = "localhost"
+default[:sensu][:extensions][:influxdb][:config][:port] = "8086"
+default[:sensu][:extensions][:influxdb][:config][:user] = "metrics"
+default[:sensu][:extensions][:influxdb][:config][:password] = "supersecret!"
+default[:sensu][:extensions][:influxdb][:config][:database] = "metrics"
+default[:sensu][:extensions][:influxdb][:config][:strip_metric] = "host"
 
 # Define Handlers
 default[:sensu][:handlers][:lmc_alerting][:enabled] = false
