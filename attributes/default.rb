@@ -14,9 +14,6 @@ default[:sensu][:nginx][:ssl][:certificate_key] = "key.pem"
 default[:uchiwa][:server_name] = "sensu"
 default[:uchiwa][:settings][:host] = "localhost"
 
-# Define Client (because Sensu can monitor itself, right)
-default[:sensu][:client][:subscriptions] = ["basic_checks"]
-
 # Define Filters
 default[:sensu][:filters][:production][:attributes][:client][:environment] = "production"
 default[:sensu][:filters][:production][:negate] = false

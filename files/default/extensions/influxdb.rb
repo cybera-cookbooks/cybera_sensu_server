@@ -9,9 +9,23 @@ require 'json'
 #   "metric_b": 1.24,
 #   "metric_c": "im a string"
 # }
-# If the integers or floats are strings in the incoming JSON object then we will comvert them
+# If the integers or floats are strings in the incoming JSON object then we will convert them
 # but if the conversion fails we'll just assume its a string (which you clearly cannot graph, but
 # could be useful for a label perhaps)
+#
+# A metric check can also define multiple series, to do this the check must set
+#     "multiple_series": true
+# in the check definition. If this is set then the check output must have a key named 'series' which
+# is defined like...
+# "series": {
+#   "my_series_name": {
+#     "timestamp": 1234567890,
+#     "metric_a": 3,
+#     "metric_b": 1.24,
+#     "metric_c": "Im a string"
+#   }
+# }
+# If these conditions are not met then we will not successfully write to InfluxDB
 module Sensu::Extension
   class Influx < Handler
     def post_init
@@ -45,10 +59,24 @@ module Sensu::Extension
       client = event_json["client"]
       check = event_json["check"]
 
-      series_name = "#{client["name"]}-#{check["name"]}"
-
-      data_points = []
       metrics = JSON.parse(check["output"])
+      puts "influx-----------------#{check["name"]}--------------"
+      if metrics["series"]
+        metrics["series"].each do |series_name, data|
+puts "influx                  series: #{series_name}"
+puts "#{data}"
+          write_series series_name, data
+        end
+      else
+        write_series "#{client["name"]}-#{check["name"]}", metrics
+      end
+
+      yield("metric successfully sent to InfluxDB", 0)
+    end
+
+    private
+    def write_series(series_name, metrics)
+      data_points = []
       timestamp = metrics["timestamp"]
       metrics.each do |key, value|
         next if key == "timestamp"
@@ -63,9 +91,7 @@ module Sensu::Extension
           :value => value
         }
       end
-
       @influxdb.write_point(series_name, data_points, true)
-      yield("metric successfully sent to InfluxDB", 0)
     end
   end
 end

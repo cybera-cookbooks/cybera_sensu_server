@@ -121,32 +121,3 @@ node[:sensu][:handlers].each do |name, attributes|
   end if attributes[:config]
 end
 
-# add sensu plugins
-  # add files
-  # make LWRP calls to generate config
-# add sensu extensions
-  # add files
-  # make LWRP calls to generate config
-# add sensu mutators
-  # add files
-  # make LWRP calls to generate config
-
-sensu_client "#{node.chef_environment}-#{node.name}" do
-  address node[:ipaddress]
-  subscriptions node[:sensu][:client][:subscriptions] + node[:roles]
-  additional(node[:sensu][:client][:additional])
-end
-
-# Add Sensu Checks
-node[:sensu][:checks].each do |name, attributes|
-  next unless attributes[:enabled]
-
-  sensu_check name do
-    type        attributes[:type] if attributes[:type]
-    command     attributes[:command]
-    handlers    attributes[:handlers]
-    subscribers attributes[:subscribers]
-    interval    attributes[:interval]
-    additional  attributes[:additional] if attributes[:additional]
-  end
-end
