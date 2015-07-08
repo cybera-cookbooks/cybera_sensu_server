@@ -121,3 +121,15 @@ node[:sensu][:handlers].each do |name, attributes|
   end if attributes[:config]
 end
 
+# Add checks to test alerting pipeline
+# -- TODO: right now this is pretty specific to LMC. In the future we should really
+#          look at making this more generalized. (mostly wrt the check handler used)
+["ok", "warning", "critical"].each do |severity|
+  sensu_check "test-check-#{severity}" do
+    command             "/etc/sensu/plugins/test-check.rb -l #{severity}"
+    handlers            ["lmc_alerting"]
+    interval            90
+    subscribers         ["nothing"]
+  end
+end
+
