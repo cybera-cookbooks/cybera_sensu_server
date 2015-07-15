@@ -60,11 +60,8 @@ module Sensu::Extension
       check = event_json["check"]
 
       metrics = JSON.parse(check["output"])
-      puts "influx-----------------#{check["name"]}--------------"
       if metrics["series"]
         metrics["series"].each do |series_name, data|
-puts "influx                  series: #{series_name}"
-puts "#{data}"
           write_series series_name, data
         end
       else
