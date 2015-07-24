@@ -1,6 +1,7 @@
 # cybera_sensu_server 0.5.0 (2015-07 sprint)
 * added test-checks to facilitate alert pipeline testing
 * removed debugging statements that accidentally got committed
+* bugfix in sensu's InfluxDB handler
 
 # cybera_sensu_server 0.4.0 (2015-05 sprint)
 * removed dependency on the moodle monitoring cookbook

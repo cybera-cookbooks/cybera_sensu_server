@@ -59,13 +59,15 @@ module Sensu::Extension
       client = event_json["client"]
       check = event_json["check"]
 
-      metrics = JSON.parse(check["output"])
-      if metrics["series"]
-        metrics["series"].each do |series_name, data|
-          write_series series_name, data
+      check["output"].split("\n").each do |metric|
+        metrics = JSON.parse(metric)
+        if metrics["series"]
+          metrics["series"].each do |series_name, data|
+            write_series series_name, data
+          end
+        else
+          write_series "#{client["name"]}-#{check["name"]}", metrics
         end
-      else
-        write_series "#{client["name"]}-#{check["name"]}", metrics
       end
 
       yield("metric successfully sent to InfluxDB", 0)
