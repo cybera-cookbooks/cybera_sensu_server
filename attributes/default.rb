@@ -61,4 +61,8 @@ default[:sensu][:handlers][:slack][:config][:message_prefix] = "Sensu: "
 default[:sensu][:handlers][:slack][:config][:surround] = "```"
 default[:sensu][:handlers][:slack][:config][:bot_name] = "Good news bot"
 
-
+# Cybera Custom Monit Slack alerts
+default[:monit][:alert][:slack][:script_file] = "/etc/monit/slack.rb"
+default[:monit][:alert][:slack][:uri] = "https://hooks.slack.com/services/xxxxxxxxxxxxxx"
+default[:monit][:alert][:slack][:channel] = "#chan"
+default[:monit][:alert][:slack][:username] = "mmonit"

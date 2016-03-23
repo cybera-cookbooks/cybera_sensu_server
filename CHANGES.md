@@ -1,3 +1,6 @@
+# cybera_sensu_server 0.6.0 (2016-03 sprint)
+* added monit cookbook dependency to monitor sensu services
+
 # cybera_sensu_server 0.5.0 (2015-07 sprint)
 * added test-checks to facilitate alert pipeline testing
 * removed debugging statements that accidentally got committed

@@ -1,0 +1,20 @@
+set mailserver smtp.cybera.ca               # primary mailserver
+#                backup.bar.baz port 10025,  # backup mailserver on port 10025
+#                localhost                   # fallback relay
+#
+#
+
+set alert andrew.klaus@cybera.ca with reminder on 10 cycles
+
+set mail-format {
+      from: monit@lmc-sensu.cloud.cybera.ca
+#  reply-to: support@domain.com
+   subject: monit alert - $EVENT at $DATE
+   message: Monit $ACTION $SERVICE at $DATE on $HOST: $DESCRIPTION.
+            Yours sincerely,
+            monit
+}
+
+check host smtp.cybera.ca with address smtp.cybera.ca
+  if failed host smtp.cybera.ca port 25 protocol smtp with timeout 30 seconds for 3 cycles
+then alert

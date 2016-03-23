@@ -5,6 +5,7 @@ include_recipe "sensu::redis"
 include_recipe "sensu::server_service"
 include_recipe "sensu::api_service"
 include_recipe "uchiwa"
+include_recipe 'poise-monit'
 
 # TODO: drop off SSL certs to be used for dashboard
 if node[:sensu][:nginx][:ssl][:enabled]
@@ -131,5 +132,28 @@ end
     interval            90
     subscribers         ["nothing"]
   end
+end
+
+monit_config 'setup_email' do
+  source 'setup_email.erb'
+end
+
+monit_config 'sensu' do
+  source 'sensu.erb'
+end
+
+monit_config 'revere_http' do
+  source 'revere_http.erb'
+end
+
+monit_config 'elasticsearch' do
+  source 'elasticsearch.erb'
+end
+
+template "#{node[:monit][:alert][:slack][:script_file]}" do
+  source 'slack.rb.erb'
+  mode '0440'
+  owner 'root'
+  group 'root'
 end
 

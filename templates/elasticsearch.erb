@@ -1,0 +1,9 @@
+check host elasticsearch_connection with address elk-client.edu.cybera.ca
+  if failed url http://elk-client.edu.cybera.ca:9200/ with timeout 15 seconds then exec /etc/monit/slack.rb repeat every 30 cycles
+  group elasticsearch
+
+  if failed url http://elk-client.edu.cybera.ca:9200/_cluster/health
+    and content == 'green'
+    with timeout 60 seconds
+  then exec /etc/monit/slack.rb repeat every 30 cycles
+  group elasticsearch

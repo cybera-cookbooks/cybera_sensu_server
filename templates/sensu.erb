@@ -1,0 +1,58 @@
+check process sensu-api with pidfile /var/run/sensu/sensu-api.pid
+  if changed pid then exec /etc/monit/slack.rb
+  if does not exist then restart
+  if does not exist then exec /etc/monit/slack.rb
+  start = "/etc/init.d/sensu-api start"
+  stop = "/etc/init.d/sensu-api stop"
+  group sensu
+
+check process sensu-client with pidfile /var/run/sensu/sensu-client.pid
+  if changed pid then exec /etc/monit/slack.rb
+  if does not exist then restart
+  if does not exist then exec /etc/monit/slack.rb
+  start = "/etc/init.d/sensu-client start"
+  stop = "/etc/init.d/sensu-client stop"
+  group sensu
+
+check process sensu-server with pidfile /var/run/sensu/sensu-server.pid
+  if changed pid then exec /etc/monit/slack.rb
+  if does not exist then restart
+  if does not exist then exec /etc/monit/slack.rb
+  start = "/etc/init.d/sensu-server start"
+  stop  = "/etc/init.d/sensu-server stop"
+  group sensu
+
+check process uchiwa with pidfile /var/run/uchiwa.pid
+  if changed pid then exec /etc/monit/slack.rb
+  if does not exist then restart
+  if does not exist then exec /etc/monit/slack.rb
+  start = "/etc/init.d/uchiwa start"
+  stop = "/etc/init.d/uchiwa stop"
+
+check process redis with pidfile /var/run/redis/6379/redis_6379.pid
+  if changed pid then exec /etc/monit/slack.rb
+  if does not exist then restart
+  if does not exist then exec /etc/monit/slack.rb
+  start = "/etc/init.d/redis6379 start"
+  stop = "/etc/init.d/redis6379 stop"
+
+check process rabbitmq with pidfile /var/run/rabbitmq/pid
+  if changed pid then exec /etc/monit/slack.rb
+  if does not exist then restart
+  if does not exist then exec /etc/monit/slack.rb
+  start = "/etc/init.d/rabbitmq-server start"
+  stop = "/etc/init.d/rabbitmq-server stop"
+  if cpu > 60% for 2 cycles then exec /etc/monit/slack.rb
+
+check process nginx with pidfile /var/run/nginx.pid
+  if changed pid then exec /etc/monit/slack.rb
+  if does not exist then restart
+  if does not exist then exec /etc/monit/slack.rb
+  start = "/etc/init.d/nginx start"
+  stop = "/etc/init.d/nginx stop"
+  #if failed port 443 protocol https request "/" then alert
+  if 5 restarts with 5 cycles then timeout
+
+
+check host lmc-production-influxdb-1 with address 10.1.1.128
+  if failed port 8086 for 5 cycles then exec /etc/monit/slack.rb repeat every 30 cycles

@@ -1,0 +1,14 @@
+check host revere with address revere.cybera.ca
+  if failed
+    port 443
+    with protocol https
+    and http headers [Host: revere.cybera.ca, Cache-Control: no-cache]
+    and request /login.html with content = "authenticity_token"
+    timeout 15 seconds for 3 cycles
+  then exec /etc/monit/slack.rb repeat every 30 cycles
+  if failed
+    port 443
+    using ssl {selfsigned: reject}
+    and certificate valid > 30 days
+    for 3 cycles
+  then exec /etc/monit/slack.rb repeat every 30 cycles
