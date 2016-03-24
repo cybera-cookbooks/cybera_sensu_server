@@ -72,7 +72,6 @@ default['poise-monit']['recipe']['httpd_password'] = "admin"
 # Mail alerts
 default[:monit][:alert][:mail][:server] = "smtp.example.com"
 default[:monit][:alert][:mail][:to] = "notify@example.com" 
-default[:monit][:alert][:mail][:from] = "monit@example.com"
 default[:monit][:alert][:mail][:cycles] = 10
 
 # Slack alerts
