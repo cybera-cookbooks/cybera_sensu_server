@@ -11,48 +11,48 @@ package "uchiwa" do
 end
 
 monit_check 'uchiwa' do
-  check "if changed pid then exec #{node[:monit][:alert][:slack][:script_file]}\n if does not exist then restart \n if does not exist then exec #{node[:monit][:alert][:slack][:script_file]}"
+  check "if does not exist then restart \n if does not exist then exec #{node[:monit][:alert][:slack][:script_file]}"
   start_program '/etc/init.d/uchiwa start'
   stop_program '/etc/init.d/uchiwa stop'
 end
 
 monit_check 'sensu-api' do
-  check "if changed pid then exec #{node[:monit][:alert][:slack][:script_file]}\n if does not exist then restart \n if does not exist then exec #{node[:monit][:alert][:slack][:script_file]}"
+  check "if does not exist then restart \n if does not exist then exec #{node[:monit][:alert][:slack][:script_file]}"
   start_program '/etc/init.d/sensu-api start'
   stop_program '/etc/init.d/sensu-api stop'
   with 'PIDFILE /var/run/sensu/sensu-api.pid'
 end
 
 monit_check 'sensu-client' do
-  check "if changed pid then exec #{node[:monit][:alert][:slack][:script_file]}\n if does not exist then restart \n if does not exist then exec #{node[:monit][:alert][:slack][:script_file]}"
+  check "if does not exist then restart \n if does not exist then exec #{node[:monit][:alert][:slack][:script_file]}"
   start_program '/etc/init.d/sensu-client start'
   stop_program '/etc/init.d/sensu-client stop'
   with 'PIDFILE /var/run/sensu/sensu-client.pid'
 end
 
 monit_check 'sensu-server' do
-  check "if changed pid then exec #{node[:monit][:alert][:slack][:script_file]}\n if does not exist then restart \n if does not exist then exec #{node[:monit][:alert][:slack][:script_file]}"
+  check "if does not exist then restart \n if does not exist then exec #{node[:monit][:alert][:slack][:script_file]}"
   start_program '/etc/init.d/sensu-server start'
   stop_program '/etc/init.d/sensu-server stop'
   with 'PIDFILE /var/run/sensu/sensu-server.pid'
 end
 
 monit_check 'redis' do
-  check "if changed pid then exec #{node[:monit][:alert][:slack][:script_file]}\n if does not exist then restart \n if does not exist then exec #{node[:monit][:alert][:slack][:script_file]}"
+  check "if does not exist then restart \n if does not exist then exec #{node[:monit][:alert][:slack][:script_file]}"
   start_program '/etc/init.d/redis6379 start'
   stop_program '/etc/init.d/redis6379 stop'
   with 'PIDFILE /var/run/redis/6379/redis_6379.pid'
 end
 
 monit_check 'rabbitmq' do
-  check "if changed pid then exec #{node[:monit][:alert][:slack][:script_file]}\n if does not exist then restart \n if does not exist then exec #{node[:monit][:alert][:slack][:script_file]}"
+  check "if does not exist then restart \n if does not exist then exec #{node[:monit][:alert][:slack][:script_file]}"
   start_program '/etc/init.d/rabbitmq-server start'
   stop_program '/etc/init.d/rabbitmq-server stop'
   with 'PIDFILE /var/run/rabbitmq/pid'
 end
 
 monit_check 'nginx' do
-  check "if changed pid then exec #{node[:monit][:alert][:slack][:script_file]}\n if does not exist then restart \n if does not exist then exec #{node[:monit][:alert][:slack][:script_file]}"
+  check "if does not exist then restart \n if does not exist then exec #{node[:monit][:alert][:slack][:script_file]}"
   start_program '/etc/init.d/nginx start'
   stop_program '/etc/init.d/nginx stop'
 end
