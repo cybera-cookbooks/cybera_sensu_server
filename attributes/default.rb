@@ -1,4 +1,4 @@
-default['rabbitmq']['use_distro_version'] = false
+default['rabbitmq']['use_distro_version'] = true
 
 default[:sensu][:use_embedded_ruby] = true
 default[:sensu][:handlers_directory] = "/etc/sensu/handlers"
