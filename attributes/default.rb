@@ -61,7 +61,7 @@ default[:sensu][:handlers][:slack][:config][:message_prefix] = "Sensu: "
 default[:sensu][:handlers][:slack][:config][:surround] = "```"
 default[:sensu][:handlers][:slack][:config][:bot_name] = "Good news bot"
 
-default['poise-monit']['recipe']['daemon_interval'] = 30
+default['poise-monit']['recipe']['daemon_interval'] = 60
 default['poise-monit']['recipe']['httpd_port'] = 2812
 default['poise-monit']['recipe']['httpd_username'] = "admin"
 default['poise-monit']['recipe']['httpd_password'] = "admin"
