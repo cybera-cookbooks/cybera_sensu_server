@@ -61,7 +61,21 @@ default[:sensu][:handlers][:slack][:config][:message_prefix] = "Sensu: "
 default[:sensu][:handlers][:slack][:config][:surround] = "```"
 default[:sensu][:handlers][:slack][:config][:bot_name] = "Good news bot"
 
-# Cybera Custom Monit Slack alerts
+default['poise-monit']['recipe']['daemon_interval'] = 30
+default['poise-monit']['recipe']['httpd_port'] = 2812
+default['poise-monit']['recipe']['httpd_username'] = "admin"
+default['poise-monit']['recipe']['httpd_password'] = "admin"
+
+
+# Cybera Custom Monit attributes independent from poise-monit
+
+# Mail alerts
+default[:monit][:alert][:mail][:server] = "smtp.example.com"
+default[:monit][:alert][:mail][:to] = "notify@example.com" 
+default[:monit][:alert][:mail][:from] = "monit@example.com"
+default[:monit][:alert][:mail][:cycles] = 10
+
+# Slack alerts
 default[:monit][:alert][:slack][:script_file] = "/etc/monit/slack.rb"
 default[:monit][:alert][:slack][:uri] = "https://hooks.slack.com/services/xxxxxxxxxxxxxx"
 default[:monit][:alert][:slack][:channel] = "#chan"
