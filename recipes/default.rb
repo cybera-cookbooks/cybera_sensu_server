@@ -135,6 +135,13 @@ end
 end
 
 
+monit_config 'mailconfig' do
+  content <<-EOH
+SET MAILSERVER #{node[:monit][:alert][:mail][:server]}
+SET ALERT #{node[:monit][:alert][:mail][:to]} with reminder on #{node[:monit][:alert][:mail][:cycles]} cycles 
+EOH
+end
+
 # Uchiwa latest version 0.14.0-1 fails when specified in environment, but it exists in the apt repo.
 package "uchiwa" do
   action :upgrade
@@ -199,10 +206,6 @@ monit_check 'elasticsearch-health' do
   check "if failed url http://elk-client.edu.cybera.ca:9200/_cluster/health and content =='green' with timeout 60 seconds then exec  #{node[:monit][:alert][:slack][:script_file]}" 
   with "address elk-client.edu.cybera.ca" 
   extra [ 'repeat every 30 cycles' ]
-end
-
-monit_config 'setup_email' do
-  source 'setup_email.erb'
 end
 
 # Ruby required for slack notifications
