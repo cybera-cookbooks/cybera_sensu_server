@@ -71,6 +71,12 @@ monit_check 'elasticsearch-health' do
   extra [ 'repeat every 30 cycles' ]
 end
 
+monit_check 'rabbitmq_queue_monitor' do
+  check_type 'program'
+  with "path \"#{node[:monit][:plugin][:rabbitmq][:queue_monitor]} 500\" "
+  check "if status != 0 for 5 cycles then exec #{node[:monit][:alert][:slack][:script_file]}"
+end
+
 # Ruby required for slack notifications
 package "ruby" do
   action :install
@@ -88,3 +94,10 @@ template "#{node[:monit][:alert][:slack][:script_file]}" do
   group 'root'
 end
 
+# Copy rabbitmq queue monitor
+template "#{node[:monit][:plugin][:rabbitmq][:queue_monitor]}" do
+  source 'rabbitmq_queue_monitor.py.erb'
+  mode '0555'
+  owner 'root'
+  group 'root'
+end

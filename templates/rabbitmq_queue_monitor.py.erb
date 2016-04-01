@@ -1,0 +1,25 @@
+#!/usr/bin/python
+import os
+import sys
+import requests
+from requests.auth import HTTPBasicAuth
+
+rabbitmq_api_url = 'http://localhost:15672/api/overview'
+rabbitmq_user = '<%= node['rabbitmq']['default_user'] %>'
+rabbitmq_pass = '<%= node['rabbitmq']['default_pass'] %>'
+
+http_headers = {'content-type': 'application/json' }
+
+if len(sys.argv) < 2 or len(sys.argv) > 2:
+  print("need 1 argument for critical queue number")
+  sys.exit(2)
+
+api_json = requests.get(rabbitmq_api_url, data=http_headers, auth=(rabbitmq_user,rabbitmq_pass)).json()
+queue_total = api_json['queue_totals']['messages']
+
+print(queue_total)
+
+if int(queue_total) > int(sys.argv[1]):
+  sys.exit(1)
+else:
+  sys.exit(0)

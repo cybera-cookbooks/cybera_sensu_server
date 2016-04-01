@@ -79,3 +79,6 @@ default[:monit][:alert][:slack][:script_file] = "/etc/monit/slack.rb"
 default[:monit][:alert][:slack][:uri] = "https://hooks.slack.com/services/xxxxxxxxxxxxxx"
 default[:monit][:alert][:slack][:channel] = "#chan"
 default[:monit][:alert][:slack][:username] = "mmonit"
+
+# Additional Plugins
+default[:monit][:plugin][:rabbitmq][:queue_monitor] = "/etc/monit/rabbitmq_queue_monitor.py"
