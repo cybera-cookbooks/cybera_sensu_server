@@ -72,7 +72,7 @@ default['poise-monit']['recipe']['httpd_password'] = "admin"
 # Mail alerts
 default[:monit][:alert][:mail][:server] = "smtp.example.com"
 default[:monit][:alert][:mail][:to] = "notify@example.com" 
-default[:monit][:alert][:mail][:cycles] = 10
+default[:monit][:alert][:mail][:cycles] = 60
 
 # Slack alerts
 default[:monit][:alert][:slack][:script_file] = "/etc/monit/slack.rb"
