@@ -5,7 +5,7 @@ require 'sensu-handler'
 require 'json'
 require 'open-uri'
 
-class Revere < Sensu::Handler
+class RevereCybera < Sensu::Handler
 
   def token
     get_setting('token')
@@ -20,7 +20,7 @@ class Revere < Sensu::Handler
   end
 
   def get_setting(name)
-    settings["revere"][name]
+    settings["revere_cybera"][name]
   end
 
   def handle
@@ -68,7 +68,7 @@ class Revere < Sensu::Handler
   end
 
   def revere_uri(token)
-    url = "https://revere.srv.ualberta.ca/api/broadcast_message_by_channel_name/#{channel}?auth_token=#{token}"
+    url = "https://revere.cybera.ca/api/broadcast_message_by_channel_name/#{channel}?auth_token=#{token}"
     URI(url)
   end
 

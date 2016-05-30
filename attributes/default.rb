@@ -1,5 +1,6 @@
 default['rabbitmq']['use_distro_version'] = true
 
+default[:sensu][:log_level] = "warn"
 default[:sensu][:use_embedded_ruby] = true
 default[:sensu][:handlers_directory] = "/etc/sensu/handlers"
 default[:sensu][:extensions_directory] = "/etc/sensu/extensions"
@@ -32,7 +33,7 @@ default[:sensu][:extensions][:influxdb][:config][:strip_metric] = "host"
 # Define Handlers
 default[:sensu][:handlers][:lmc_alerting][:enabled] = false
 default[:sensu][:handlers][:lmc_alerting][:type] = "set"
-default[:sensu][:handlers][:lmc_alerting][:handlers] = ["mailer", "slack", "revere"]
+default[:sensu][:handlers][:lmc_alerting][:handlers] = ["mailer", "slack", "revere", "revere_cybera"]
 
 #default[:sensu][:handlers][:mailer][:admin_gui] = "http://admin.example.com:8080/"
 default[:sensu][:handlers][:mailer][:enabled] = false
@@ -50,6 +51,13 @@ default[:sensu][:handlers][:revere][:filters] = ["production"]
 default[:sensu][:handlers][:revere][:config][:token] = "mytoken"
 default[:sensu][:handlers][:revere][:config][:url] = "revere.myorg.com"
 default[:sensu][:handlers][:revere][:config][:channel] = "alert channel"
+
+default[:sensu][:handlers][:revere_cybera][:enabled] = false
+default[:sensu][:handlers][:revere_cybera][:file_name] = "revere_cybera.rb"
+default[:sensu][:handlers][:revere_cybera][:filters] = ["production"]
+default[:sensu][:handlers][:revere_cybera][:config][:token] = "mytoken"
+default[:sensu][:handlers][:revere_cybera][:config][:url] = "revere.myorg.com"
+default[:sensu][:handlers][:revere_cybera][:config][:channel] = "alert channel"
 
 default[:sensu][:handlers][:slack][:enabled] = false
 default[:sensu][:handlers][:slack][:file_name] = "slack.rb"
